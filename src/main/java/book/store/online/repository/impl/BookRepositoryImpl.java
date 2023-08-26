@@ -1,6 +1,6 @@
 package book.store.online.repository.impl;
 
-import book.store.online.entity.Book;
+import book.store.online.model.Book;
 import book.store.online.repository.BookRepository;
 import java.util.List;
 import org.hibernate.Session;

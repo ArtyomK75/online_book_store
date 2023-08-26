@@ -1,6 +1,6 @@
 package book.store.online;
 
-import book.store.online.entity.Book;
+import book.store.online.model.Book;
 import book.store.online.service.BookService;
 import java.math.BigDecimal;
 import org.springframework.boot.CommandLineRunner;

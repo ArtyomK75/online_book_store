@@ -1,6 +1,6 @@
 package book.store.online.repository;
 
-import book.store.online.entity.Book;
+import book.store.online.model.Book;
 import java.util.List;
 
 public interface BookRepository {

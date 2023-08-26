@@ -1,6 +1,6 @@
 package book.store.online.service.impl;
 
-import book.store.online.entity.Book;
+import book.store.online.model.Book;
 import book.store.online.repository.BookRepository;
 import book.store.online.service.BookService;
 import java.util.List;
