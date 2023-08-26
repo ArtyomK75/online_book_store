@@ -1,4 +1,4 @@
-package book.store.online_book_store;
+package book.store.online;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
