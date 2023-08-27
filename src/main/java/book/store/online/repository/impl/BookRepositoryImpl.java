@@ -41,17 +41,4 @@ public class BookRepositoryImpl implements BookRepository {
             throw new RuntimeException("Can't get all books", e);
         }
     }
-
-    @Override
-    public Optional<Book> findById(Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            Book book = entityManager.createQuery("FROM Book b "
-                            + " WHERE b.id = :id", Book.class)
-                    .setParameter("id", id)
-                    .getSingleResult();
-            return book == null ? Optional.empty() : Optional.of(book);
-        } catch (Exception e) {
-            throw new RuntimeException("Can't find book by id: " + id, e);
-        }
-    }
 }
