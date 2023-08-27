@@ -2,56 +2,50 @@ package book.store.online.repository.impl;
 
 import book.store.online.model.Book;
 import book.store.online.repository.BookRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
 import java.util.List;
-import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
-@RequiredArgsConstructor
 @Repository
 public class BookRepositoryImpl implements BookRepository {
-    private final EntityManagerFactory entityManagerFactory;
+    private final SessionFactory sessionFactory;
+
+    public BookRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Book save(Book book) {
-        EntityTransaction transaction = null;
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-            entityManager.persist(book);
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            session.save(book);
             transaction.commit();
             return book;
         } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
+            if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't save book in DB: " + book, e);
+            throw new RuntimeException("Can't create entity: " + book, e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
     @Override
-    public List<Book> findAll() {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            return entityManager.createQuery("FROM Book", Book.class)
+    public List findAll() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Book", Book.class)
                     .getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get all books", e);
         }
-    }
 
-    @Override
-    public Optional<Book> findById(Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            Book book = entityManager.createQuery("FROM Book b "
-                            + " WHERE b.id = :id", Book.class)
-                    .setParameter("id", id)
-                    .getSingleResult();
-            return book == null ? Optional.empty() : Optional.of(book);
-        } catch (Exception e) {
-            throw new RuntimeException("Can't find book by id: " + id, e);
-        }
     }
 }
