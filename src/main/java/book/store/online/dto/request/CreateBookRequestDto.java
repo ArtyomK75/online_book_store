@@ -1,7 +1,6 @@
 package book.store.online.dto.request;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import lombok.Data;
@@ -12,7 +11,7 @@ public class CreateBookRequestDto {
     private String title;
     @NotNull
     private String author;
-    @NotEmpty
+    @NotNull
     private String isbn;
     @NotNull
     @Min(0)
