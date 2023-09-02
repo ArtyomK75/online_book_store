@@ -1,16 +1,19 @@
 package book.store.online.service.impl;
 
+import book.store.online.dto.request.BookSearchParametersDto;
 import book.store.online.dto.request.CreateBookRequestDto;
 import book.store.online.dto.response.BookDto;
 import book.store.online.exception.EntityNotFoundException;
 import book.store.online.mapper.BookMapper;
 import book.store.online.model.Book;
-import book.store.online.repository.BookRepository;
+import book.store.online.repository.book.BookRepository;
+import book.store.online.repository.book.BookSpecificationBuilder;
 import book.store.online.service.BookService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final BookSpecificationBuilder bookSpecificationBuilder;
 
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
@@ -39,5 +43,29 @@ public class BookServiceImpl implements BookService {
             return bookMapper.toDto(optionalBook.get());
         }
         throw new EntityNotFoundException("Can't find book by id: " + id);
+    }
+
+    @Override
+    public BookDto update(Long id, CreateBookRequestDto bookDto) {
+        Optional<Book> optionalBook = bookRepository.findById(id);
+        if (optionalBook.isPresent()) {
+            Book book = bookMapper.toModel(bookDto);
+            book.setId(optionalBook.get().getId());
+            return bookMapper.toDto(bookRepository.save(book));
+        }
+        throw new EntityNotFoundException("Can't find book by id: " + id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        bookRepository.deleteById(id);
+    }
+
+    @Override
+    public List<BookDto> search(BookSearchParametersDto params) {
+        Specification<Book> bookSpecification = bookSpecificationBuilder.build(params);
+        return bookRepository.findAll(bookSpecification).stream()
+                .map(bookMapper::toDto)
+                .toList();
     }
 }
