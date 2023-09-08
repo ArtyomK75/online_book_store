@@ -6,11 +6,12 @@ import book.store.online.dto.response.UserLoginResponseDto;
 import book.store.online.dto.response.UserResponseDto;
 import book.store.online.exception.RegistrationException;
 import book.store.online.mapper.UserMapper;
+import book.store.online.model.Role;
 import book.store.online.model.User;
 import book.store.online.repository.user.UserRepository;
 import book.store.online.service.RoleService;
 import book.store.online.service.UserService;
-import java.util.stream.Collectors;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private static final Role.RoleName DEFAULT_ROLE = Role.RoleName.ROLE_USER;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -35,11 +37,8 @@ public class UserServiceImpl implements UserService {
         user.setFirstName(requestDto.getFirstName());
         user.setLastName(requestDto.getLastName());
         user.setShippingAddress(requestDto.getShippingAddress());
-        if (!requestDto.getRoles().isEmpty()) {
-            user.setRoles(requestDto.getRoles().stream()
-                    .map(roleService::getByName)
-                    .collect(Collectors.toSet()));
-        }
+        Role defaultRole = roleService.getByName(DEFAULT_ROLE.name());
+        user.setRoles(Set.of(defaultRole));
         return userMapper.toDto(userRepository.save(user));
     }
 

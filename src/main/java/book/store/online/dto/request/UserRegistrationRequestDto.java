@@ -4,7 +4,6 @@ import book.store.online.lib.FieldsValueMatch;
 import book.store.online.lib.ValidEmail;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import java.util.Set;
 import lombok.Data;
 
 @FieldsValueMatch(
@@ -25,5 +24,4 @@ public class UserRegistrationRequestDto {
     @NotEmpty
     private String lastName;
     private String shippingAddress;
-    private Set<String> roles;
 }
