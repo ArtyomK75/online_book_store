@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: import-initial-roles
+      author: Artem Kostenko
+      changes:
+        - loadData:
+            columns:
+              - column:
+                  header: id
+                  name: id
+                  type: bigint
+              - column:
+                  header: name
+                  name: name
+                  type: tinyint
+              - column:
+                  header: is_deleted
+                  name: is_deleted
+                  type: boolean
+            commentLineStartsWith: '#'
+            encoding: UTF-8
+            file: data/roles.csv
+            quotchar: '"'
+            separator: ','
+            relativeToChangelogFile: true
+            tableName: roles
