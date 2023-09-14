@@ -6,6 +6,7 @@ import book.store.online.dto.response.BookDto;
 import book.store.online.dto.response.BookDtoWithoutCategoryIds;
 import book.store.online.model.Book;
 import book.store.online.model.Category;
+import book.store.online.service.BookService;
 import java.util.stream.Collectors;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -13,7 +14,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-@Mapper(config = MapperConfig.class, uses = BookMapper.class)
+@Mapper(config = MapperConfig.class, uses = BookService.class)
 public interface BookMapper {
     BookDto toDto(Book book);
 
@@ -32,8 +33,23 @@ public interface BookMapper {
     }
 
     @Named("bookFromId")
-    @Mapping(target = "book", source = "bookId", qualifiedByName = "bookFromId")
     default Book bookFromId(Long id) {
-        return null;
+        if (id == null) {
+            return null;
+        }
+        Book book = new Book();
+        book.setId(id);
+        return book;
     }
+
+    @Named("bookToId")
+    default Long bookToId(Book book) {
+        return book.getId();
+    }
+
+    @Named("bookToBookTitle")
+    default String bookToBookTitle(Book book) {
+        return book.getTitle();
+    }
+
 }

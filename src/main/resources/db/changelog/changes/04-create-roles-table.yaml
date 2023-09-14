@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-books-table
+      id: create-roles-table
       author: Artem Kostenko
       changes:
         - createTable:
