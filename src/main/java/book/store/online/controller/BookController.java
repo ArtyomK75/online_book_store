@@ -3,6 +3,7 @@ package book.store.online.controller;
 import book.store.online.dto.request.BookSearchParametersDto;
 import book.store.online.dto.request.CreateBookRequestDto;
 import book.store.online.dto.response.BookDto;
+import book.store.online.dto.response.BookDtoWithoutCategoryIds;
 import book.store.online.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +40,7 @@ public class BookController {
     @Operation(summary = "Get book by ID", description = "Get a book by passed ID")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    public BookDto getBookById(@PathVariable Long id) {
+    public BookDtoWithoutCategoryIds getBookById(@PathVariable Long id) {
         return bookService.getById(id);
     }
 

@@ -3,6 +3,7 @@ package book.store.online.service.impl;
 import book.store.online.dto.request.BookSearchParametersDto;
 import book.store.online.dto.request.CreateBookRequestDto;
 import book.store.online.dto.response.BookDto;
+import book.store.online.dto.response.BookDtoWithoutCategoryIds;
 import book.store.online.exception.EntityNotFoundException;
 import book.store.online.mapper.BookMapper;
 import book.store.online.model.Book;
@@ -38,10 +39,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto getById(Long id) {
+    public BookDtoWithoutCategoryIds getById(Long id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
         if (optionalBook.isPresent()) {
-            return bookMapper.toDto(optionalBook.get());
+            return bookMapper.toDtoWithoutCategories(optionalBook.get());
         }
         throw new EntityNotFoundException("Can't find book by id: " + id);
     }
@@ -68,5 +69,12 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAll(bookSpecification).stream()
                 .map(bookMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<BookDto> findAllByCategoryId(Long id) {
+        return bookRepository.findAllByCategoryId(id).stream()
+                .map(bookMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
