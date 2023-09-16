@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-books-table
+      id: create-categories-table
       author: Artem Kostenko
       changes:
         - createTable:
