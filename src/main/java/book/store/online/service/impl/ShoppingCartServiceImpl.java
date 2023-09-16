@@ -11,8 +11,6 @@ import book.store.online.model.ShoppingCart;
 import book.store.online.model.User;
 import book.store.online.repository.cartitem.CartItemRepository;
 import book.store.online.repository.shoppingcart.ShoppingCartRepository;
-import book.store.online.repository.user.UserRepository;
-import book.store.online.security.JwtUtil;
 import book.store.online.service.ShoppingCartService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -22,8 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
+    private final UserUtil userUtil;
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartMapper shoppingCartMapper;
     private final CartItemMapper cartItemMapper;
@@ -31,7 +28,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCartDto getShoppingCart(HttpServletRequest request) {
-        User user = getCurrentUser(request);
+        User user = userUtil.getCurrentUser(request);
         Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository
                 .findShoppingCartByUserId(user.getId());
         if (optionalShoppingCart.isPresent()) {
@@ -42,7 +39,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public void addBookToCart(CartItemRequestDto cartItemRequestDto, HttpServletRequest request) {
-        User user = getCurrentUser(request);
+        User user = userUtil.getCurrentUser(request);
         Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository
                 .findShoppingCartByUserId(user.getId());
         if (optionalShoppingCart.isEmpty()) {
@@ -74,14 +71,5 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void deleteById(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
-    }
-
-    private User getCurrentUser(HttpServletRequest request) {
-        String email = jwtUtil.getUsername(jwtUtil.getToken(request));
-        Optional<User> optionalUser = userRepository.findUserByEmail(email);
-        if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException("Can't find user by email: " + email);
-        }
-        return optionalUser.get();
     }
 }
