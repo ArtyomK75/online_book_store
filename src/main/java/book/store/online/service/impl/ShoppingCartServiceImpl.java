@@ -12,7 +12,6 @@ import book.store.online.model.User;
 import book.store.online.repository.cartitem.CartItemRepository;
 import book.store.online.repository.shoppingcart.ShoppingCartRepository;
 import book.store.online.service.ShoppingCartService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,8 +26,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemRepository cartItemRepository;
 
     @Override
-    public ShoppingCartDto getShoppingCart(HttpServletRequest request) {
-        User user = userUtil.getCurrentUser(request);
+    public ShoppingCartDto getShoppingCart(String token) {
+        User user = userUtil.getCurrentUser(token);
         Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository
                 .findShoppingCartByUserId(user.getId());
         if (optionalShoppingCart.isPresent()) {
@@ -38,8 +37,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void addBookToCart(CartItemRequestDto cartItemRequestDto, HttpServletRequest request) {
-        User user = userUtil.getCurrentUser(request);
+    public void addBookToCart(CartItemRequestDto cartItemRequestDto, String token) {
+        User user = userUtil.getCurrentUser(token);
         Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository
                 .findShoppingCartByUserId(user.getId());
         if (optionalShoppingCart.isEmpty()) {
@@ -53,10 +52,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void update(Long cartItemId, CartItemRequestDto cartDto, HttpServletRequest request) {
-        Optional<CartItem> optionalCartItem = cartItemRepository.findById(cartItemId);
+    public void update(Long cartItemId, CartItemRequestDto cartDto, String token) {
+        User user = userUtil.getCurrentUser(token);
+        Optional<CartItem> optionalCartItem = cartItemRepository
+                .findByIdAndShoppingCartUserId(cartItemId, user.getId());
         if (optionalCartItem.isEmpty()) {
-            throw new EntityNotFoundException("Can't find cart item by id : " + cartItemId);
+            throw new EntityNotFoundException("Can't find cart item by id : "
+                    + cartItemId + " and user ID: " + user.getId());
         }
         CartItem cartItem = optionalCartItem.get();
         if (cartDto.getBookId() != null) {

@@ -2,14 +2,13 @@ package book.store.online.service;
 
 import book.store.online.dto.request.CartItemRequestDto;
 import book.store.online.dto.response.ShoppingCartDto;
-import jakarta.servlet.http.HttpServletRequest;
 
 public interface ShoppingCartService {
-    ShoppingCartDto getShoppingCart(HttpServletRequest request);
+    ShoppingCartDto getShoppingCart(String token);
 
-    void addBookToCart(CartItemRequestDto cartItemRequestDto, HttpServletRequest request);
+    void addBookToCart(CartItemRequestDto cartItemRequestDto, String token);
 
-    void update(Long cartItemId, CartItemRequestDto cartDto, HttpServletRequest request);
+    void update(Long cartItemId, CartItemRequestDto cartDto, String token);
 
     void deleteById(Long cartItemId);
 }

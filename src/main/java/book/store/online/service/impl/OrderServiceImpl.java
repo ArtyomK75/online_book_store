@@ -17,7 +17,7 @@ import book.store.online.repository.order.OrderRepository;
 import book.store.online.repository.orderitem.OrderItemRepository;
 import book.store.online.repository.shoppingcart.ShoppingCartRepository;
 import book.store.online.service.OrderService;
-import jakarta.servlet.http.HttpServletRequest;
+import book.store.online.service.ShoppingCartService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,18 +36,19 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
-    public List<OrderDto> findOrders(HttpServletRequest request) {
-        User user = userUtil.getCurrentUser(request);
+    public List<OrderDto> findOrders(String token) {
+        User user = userUtil.getCurrentUser(token);
         return orderRepository.findOrderByUserId(user.getId()).stream()
                 .map(orderMapper::toDto)
                 .toList();
     }
 
     @Override
-    public void addOrder(PlaceOrderDto orderDto, HttpServletRequest request) {
-        User user = userUtil.getCurrentUser(request);
+    public void addOrder(PlaceOrderDto orderDto, String token) {
+        User user = userUtil.getCurrentUser(token);
         Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository
                 .findShoppingCartByUserId(user.getId());
         if (optionalShoppingCart.isEmpty()) {
@@ -74,11 +75,14 @@ public class OrderServiceImpl implements OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
 
         orderRepository.save(order);
+
+        shoppingCart.getCartItems()
+                .forEach(cartItem -> shoppingCartService.deleteById(cartItem.getId()));
     }
 
     @Override
-    public OrderWithoutDetailsDto findListOfOrderItems(HttpServletRequest request, Long orderId) {
-        User user = userUtil.getCurrentUser(request);
+    public OrderWithoutDetailsDto findListOfOrderItems(String token, Long orderId) {
+        User user = userUtil.getCurrentUser(token);
         Set<OrderItemDto> orderItemDtos = orderItemRepository
                 .findOrderItemsByOrderIdAndOrderUserId(orderId, user.getId()).stream()
                 .map(orderItemMapper::toDto)
@@ -89,8 +93,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderItemDto getOrderItem(HttpServletRequest request, Long orderId, Long itemId) {
-        User user = userUtil.getCurrentUser(request);
+    public OrderItemDto getOrderItem(String token, Long orderId, Long itemId) {
+        User user = userUtil.getCurrentUser(token);
         Optional<OrderItem> optionalOrderItem = orderItemRepository
                 .findOrderItemByOrderIdAndOrderUserIdAndId(orderId, user.getId(), itemId);
         if (optionalOrderItem.isEmpty()) {
