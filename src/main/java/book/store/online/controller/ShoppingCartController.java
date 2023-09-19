@@ -5,8 +5,8 @@ import book.store.online.dto.response.ShoppingCartDto;
 import book.store.online.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,8 +32,9 @@ public class ShoppingCartController {
             description = "Get shopping cart by passed token")
     @GetMapping
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ShoppingCartDto getUserShoppingCart(HttpServletRequest request) {
-        return shoppingCartService.getShoppingCart(request);
+    public ShoppingCartDto getUserShoppingCart(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        return shoppingCartService.getShoppingCart(token);
     }
 
     @Operation(summary = "Add data to shopping cart",
@@ -41,8 +43,8 @@ public class ShoppingCartController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addBookToCart(@RequestBody CartItemRequestDto cartDto,
-            HttpServletRequest request) {
-        shoppingCartService.addBookToCart(cartDto, request);
+                              @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        shoppingCartService.addBookToCart(cartDto, token);
     }
 
     @Operation(summary = "Update cart item",
@@ -51,9 +53,9 @@ public class ShoppingCartController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateCartItem(@PathVariable Long cartItemId,
-                                  @RequestBody CartItemRequestDto cartDto,
-                                  HttpServletRequest request) {
-        shoppingCartService.update(cartItemId, cartDto, request);
+                               @RequestBody CartItemRequestDto cartDto,
+                               @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        shoppingCartService.update(cartItemId, cartDto, token);
     }
 
     @Operation(summary = "Delete cart item",

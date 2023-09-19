@@ -5,7 +5,6 @@ import book.store.online.dto.response.CategoryDto;
 import book.store.online.exception.EntityNotFoundException;
 import book.store.online.mapper.CategoryMapper;
 import book.store.online.model.Category;
-import book.store.online.repository.book.BookSpecificationBuilder;
 import book.store.online.repository.category.CategoryRepository;
 import book.store.online.service.CategoryService;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
-    private final BookSpecificationBuilder bookSpecificationBuilder;
 
     @Override
     public List<CategoryDto> findAll() {
