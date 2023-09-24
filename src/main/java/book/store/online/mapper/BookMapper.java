@@ -14,19 +14,21 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-@Mapper(config = MapperConfig.class, uses = BookService.class)
+@Mapper(config = MapperConfig.class, uses = {BookService.class, CategoryMapper.class})
 public interface BookMapper {
     BookDto toDto(Book book);
-
-    Book toEntity(CreateBookRequestDto bookDto);
 
     BookDtoWithoutCategoryIds toDtoWithoutCategories(Book book);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "categories", source = "categoryIds", qualifiedByName = "categoryFromId")
     Book toModel(CreateBookRequestDto requestDto);
 
     @AfterMapping
     default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {
+        if (book.getCategories() == null) {
+            return;
+        }
         bookDto.setCategoryIds(book.getCategories().stream()
                 .map(Category::getId)
                 .collect(Collectors.toSet()));

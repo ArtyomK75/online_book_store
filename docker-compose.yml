@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  docker-mysql:
+    image: mysql:8.0.33
+    command: --default-authentication-plugin=mysql_native_password
+    restart: no
+    env_file:
+      - ./.env
+    environment:
+      TZ: UTC
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_DATABASE: online_book_store
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_TCP_PORT: 3306
+    ports:
+      - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+    expose:
+      - $MYSQL_LOCAL_PORT
+
+  app:
+    restart: on-failure
+    depends_on:
+      - docker-mysql
+    image: online_book_store
+    build: .
+    env_file:
+      - ./.env
+    ports:
+      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+      - $DEBUG_PORT:$DEBUG_PORT
+    environment:
+      SPRING_APPLICATION_JSON: '{
+      "spring.datasource.driver-class-name" : "$MYSQL_DRIVER_CLASS_NAME",
+      "spring.datasource.url" : "$MYSQL_URL",
+      "spring.datasource.username" : "$MYSQL_USER",
+      "spring.datasource.password" : "$MYSQL_PASSWORD"
+      }'
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
