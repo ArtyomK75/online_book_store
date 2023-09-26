@@ -173,6 +173,8 @@ class CategoryControllerTest {
             "classpath:database/categories/create_3_test_categories.sql",
             "classpath:database/book_categories/create_5_book_categories.sql"},
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:database/books/clear_table_books.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @DisplayName("Get books by category ID")
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
