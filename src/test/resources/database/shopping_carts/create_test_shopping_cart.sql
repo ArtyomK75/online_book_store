@@ -1,0 +1,1 @@
+insert into shopping_carts(id) values(1)
