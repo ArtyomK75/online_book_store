@@ -32,6 +32,7 @@ public class CategoryController {
 
     @Operation(summary = "Create category", description = "Create a category by passed data")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public CategoryDto createCategory(@RequestBody CreateCategoryRequestDto categoryDto) {
         return categoryService.save(categoryDto);
@@ -54,6 +55,7 @@ public class CategoryController {
 
     @Operation(summary = "Update category", description = "Update a category by passed data")
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public CategoryDto updateCategory(@PathVariable Long id,
                                       @RequestBody CreateCategoryRequestDto categoryDto) {

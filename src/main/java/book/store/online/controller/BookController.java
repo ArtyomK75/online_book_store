@@ -46,6 +46,7 @@ public class BookController {
 
     @Operation(summary = "Create book", description = "Create a book by passed data")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
         return bookService.save(bookDto);
@@ -53,6 +54,7 @@ public class BookController {
 
     @Operation(summary = "Update book", description = "Update a book by passed data")
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BookDto updateBook(@PathVariable Long id,
                               @RequestBody @Valid CreateBookRequestDto bookDto) {
