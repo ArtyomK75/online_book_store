@@ -15,7 +15,6 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-
 class ShoppingCartRepositoryTest {
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
@@ -35,7 +34,6 @@ class ShoppingCartRepositoryTest {
             "classpath:database/user_roles/clear_table_user_roles.sql",
             "classpath:database/shopping_carts/clear_table_shopping_carts.sql"},
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-
     @Test
     void findShoppingCartByUserId() {
         Long testUserId = 1L;
